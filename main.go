@@ -2,14 +2,14 @@ package main
 
 import (
 	"bufio"
-	"fmt"
 	"os"
 	"strconv"
+	"fmt"
+	"guessit/calcs"
 )
 
 func main() {
 	if len(os.Args) != 1 {
-		fmt.Println("Usage: go run main.go")
 		return
 	}
 
@@ -18,11 +18,18 @@ func main() {
 	for scanner.Scan() {
 		input := scanner.Text()
 		num, err := strconv.ParseFloat(input, 64)
+		
 		if err != nil {
-			fmt.Println("Error parsing input")
+			fmt.Fprintf(os.Stderr, "Error parsing input: %v\n", err)
 			continue
 		}
 		numbers = append(numbers, num)
+		if len(numbers) > 1 {
+			lower, upper := calcs.PredictRange(numbers)
+			fmt.Printf("%d %d\n", lower, upper)
+		}
 	}
-	fmt.Println(numbers)
+	if err := scanner.Err(); err != nil {
+		fmt.Fprintf(os.Stderr, "Error reading input: %v\n", err)
+	}
 }
